@@ -184,9 +184,8 @@ export default function HomePage() {
         <div className="flex gap-2 min-w-max mx-auto max-w-5xl">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-              activeCategory === 'all' ? 'text-white' : ''
-            }`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${activeCategory === 'all' ? 'text-white' : ''
+              }`}
             style={
               activeCategory === 'all'
                 ? { background: 'var(--violet-main)', color: 'white' }
@@ -234,7 +233,7 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="text-center py-10 text-xs" style={{ color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-        © 2026 — Boutique d'Isabelle · Tous droits réservés
+        © 2026 Boutique d'Isabelle.
         <span className="mx-3" style={{ color: 'var(--border)' }}>·</span>
         <Link href="/admin" className="hover:underline" style={{ color: 'var(--violet-light)' }}>
           Admin

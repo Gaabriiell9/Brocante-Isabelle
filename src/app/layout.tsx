@@ -8,8 +8,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Vide-Dressing',
-  description: 'Pièces sélectionnées, prix doux.',
+  title: "Boutique d'Isabelle",
+  description: 'Chaque pièce a son histoire 🌸',
   openGraph: {
     type: 'website',
   },
