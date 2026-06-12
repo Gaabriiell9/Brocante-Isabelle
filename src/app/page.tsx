@@ -163,8 +163,8 @@ export default function HomePage() {
     <main style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
       {/* ── Topbar ── */}
       <header className="relative z-20 flex justify-between items-center px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
-        <span className="text-xs tracking-widest" style={{ color: 'var(--violet-main)' }}>
-          ✦ Vide-Dressing ✦
+        <span className="text-xs tracking-widest" style={{ color: 'var(--violet-main)', fontStyle: 'italic' }}>
+          ✿ Les Pépites Da Paixão ✿
         </span>
         <span
           className="text-lg italic"
@@ -175,7 +175,7 @@ export default function HomePage() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          ✿ Isabelle
+          ✿
         </span>
       </header>
 
