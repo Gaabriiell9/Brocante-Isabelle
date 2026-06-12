@@ -28,7 +28,12 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     <Link href={`/product/${product.id}`} className="block">
       <article
         className="card-glow stagger-item rounded-2xl overflow-hidden cursor-pointer"
-        style={{ animationDelay: delay, backgroundColor: 'var(--bg-card)' }}
+        style={{
+          animationDelay: delay,
+          backgroundColor: 'var(--bg-card)',
+          opacity: product.status === 'sold' ? 0.6 : 1,
+          filter: product.status === 'sold' ? 'grayscale(50%)' : 'none',
+        }}
       >
         {/* Image */}
         <div className="relative w-full" style={{ aspectRatio: '3/4' }}>
@@ -39,6 +44,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover"
+              style={{ opacity: product.status === 'sold' ? 0.45 : 1, filter: product.status === 'sold' ? 'grayscale(60%)' : 'none' }}
               onError={() => setImgError(true)}
             />
           ) : (

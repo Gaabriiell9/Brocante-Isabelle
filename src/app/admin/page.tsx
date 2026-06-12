@@ -28,7 +28,7 @@ type ProdFormData = {
 }
 const emptyForm: ProdFormData = {
   title: '', description: '', price: '', size: '',
-  category_id: '', status: 'available', whatsapp_number: '',
+  category_id: '', status: 'available', whatsapp_number: '+594694264093',
 }
 
 /* ─── Main ─────────────────────────────────────── */
@@ -153,7 +153,7 @@ export default function AdminPage() {
       category_id: form.category_id || null,
       status: form.status,
       images,
-      whatsapp_number: form.whatsapp_number.trim() || '0600000000',
+      whatsapp_number: form.whatsapp_number.trim() || '+594694264093',
     }
     if (editingProd) {
       await supabase.from('products').update(payload).eq('id', editingProd.id)
