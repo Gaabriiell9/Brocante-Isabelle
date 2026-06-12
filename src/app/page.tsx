@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase, type Product, type Category } from '@/lib/supabase'
-import { MessageCircle, ChevronDown, Sparkles } from 'lucide-react'
 
 /* ─── Helpers ─────────────────────────────── */
 const STATUS_LABEL: Record<string, string> = {
@@ -111,8 +110,6 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [loading, setLoading] = useState(true)
-  const [count, setCount] = useState(0)
-  const headerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     async function load() {
@@ -124,10 +121,7 @@ export default function HomePage() {
           .order('created_at', { ascending: false }),
       ])
       if (catRes.data) setCategories(catRes.data)
-      if (prodRes.data) {
-        setProducts(prodRes.data)
-        setCount(prodRes.data.length)
-      }
+      if (prodRes.data) setProducts(prodRes.data)
       setLoading(false)
     }
     load()
@@ -140,40 +134,11 @@ export default function HomePage() {
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
-      {/* Ambient glow */}
-      <div className="ambient-glow" style={{ top: '-200px', left: '50%', transform: 'translateX(-50%)' }} />
-
-      {/* ── Header ── */}
-      <header
-        ref={headerRef}
-        className="relative z-10 text-center py-16 px-6"
-        style={{ borderBottom: '1px solid var(--border)' }}
-      >
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Sparkles size={14} style={{ color: 'var(--violet-main)' }} />
-          <span className="text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
-            Vide-dressing
-          </span>
-          <Sparkles size={14} style={{ color: 'var(--violet-main)' }} />
-        </div>
-
-        <h1
-          className="font-display text-4xl md:text-6xl gradient-text mb-4"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-        >
-          Ma Boutique
-        </h1>
-
-        <p className="text-sm max-w-xs mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Pièces sélectionnées — prix doux
-        </p>
-
-        <div
-          className="mt-4 inline-block px-3 py-1 rounded-full text-xs font-medium"
-          style={{ background: 'rgba(158,128,231,0.15)', color: 'var(--violet-light)', border: '1px solid var(--border)' }}
-        >
-          {loading ? '…' : count} articles
-        </div>
+      {/* ── Topbar ── */}
+      <header className="relative z-20 px-5 py-2.5" style={{ borderBottom: '1px solid var(--border)' }}>
+        <span className="text-xs tracking-widest" style={{ color: 'var(--violet-main)' }}>
+          ✦ Vide-Dressing ✦
+        </span>
       </header>
 
       {/* ── Category filter ── */}
