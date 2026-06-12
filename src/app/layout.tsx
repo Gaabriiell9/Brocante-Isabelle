@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "Boutique d'Isabelle",
+  title: 'Les Pépites Da Paixão',
   description: 'Chaque pièce a son histoire 🌸',
   openGraph: {
     type: 'website',

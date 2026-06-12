@@ -225,7 +225,7 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="text-center py-10 text-xs" style={{ color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-        © 2026 Boutique d'Isabelle.
+        © 2026 Les Pépites Da Paixão.
         <span className="mx-3" style={{ color: 'var(--border)' }}>·</span>
         <Link href="/admin" className="hover:underline" style={{ color: 'var(--violet-light)' }}>
           Admin
