@@ -55,15 +55,6 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             </div>
           )}
 
-          {/* Status badge */}
-          {product.status !== 'available' && (
-            <span
-              className={`absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_CLASS[product.status]}`}
-            >
-              {STATUS_LABEL[product.status]}
-            </span>
-          )}
-
           {/* Sold banner */}
           {product.status === 'sold' && (
             <div

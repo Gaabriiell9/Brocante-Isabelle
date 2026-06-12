@@ -60,6 +60,7 @@ export default function AdminPage() {
   const [newCatName, setNewCatName] = useState('')
   const [savingCat, setSavingCat] = useState(false)
   const [deletingCatId, setDeletingCatId] = useState<string | null>(null)
+  const [deleteCatError, setDeleteCatError] = useState('')
 
   /* ── Session check on mount ── */
   useEffect(() => {
@@ -179,16 +180,28 @@ export default function AdminPage() {
     if (!newCatName.trim()) return
     setSavingCat(true)
     const slug = newCatName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-    await supabase.from('categories').insert({ name: newCatName.trim(), slug })
+    const { error } = await supabase.from('categories').insert({ name: newCatName.trim(), slug })
+    if (error) console.error(error)
     setNewCatName('')
     await loadAll()
     setSavingCat(false)
   }
 
   async function deleteCat(id: string) {
-    if (!confirm('Supprimer cette catégorie ? Les articles liés ne seront pas supprimés.')) return
+    if (!confirm('Supprimer cette catégorie ?')) return
     setDeletingCatId(id)
-    await supabase.from('categories').delete().eq('id', id)
+    const { count } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('category_id', id)
+    if (count && count > 0) {
+      setDeleteCatError(`Impossible — ${count} article(s) utilisent cette catégorie. Retire-les d'abord.`)
+      setDeletingCatId(null)
+      setTimeout(() => setDeleteCatError(''), 4000)
+      return
+    }
+    const { error } = await supabase.from('categories').delete().eq('id', id)
+    if (error) console.error(error)
     await loadAll()
     setDeletingCatId(null)
   }
@@ -298,9 +311,6 @@ export default function AdminPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products.map((p) => {
                   const img = p.images?.[0]
-                  const statusColors: Record<string, string> = {
-                    available: '#86efac', reserved: '#fde047', sold: '#f87171'
-                  }
                   return (
                     <div key={p.id} className="rounded-2xl overflow-hidden group relative" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                       <div className="relative" style={{ aspectRatio: '3/4' }}>
@@ -309,8 +319,13 @@ export default function AdminPage() {
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'var(--bg-card-hover)' }}>👗</div>
                         )}
-                        {/* Status dot */}
-                        <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border-2 border-black" style={{ background: statusColors[p.status] }} />
+                        {/* Status badge */}
+                        {p.status === 'sold' && (
+                          <span className="absolute bottom-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full text-white" style={{ background: 'rgba(158,128,231,0.9)' }}>Vendu</span>
+                        )}
+                        {p.status === 'reserved' && (
+                          <span className="absolute bottom-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full text-black" style={{ background: 'rgba(253,224,71,0.9)' }}>Réservé</span>
+                        )}
                         {/* Actions overlay */}
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2" style={{ background: 'rgba(14,12,26,0.75)' }}>
                           <button onClick={() => openEdit(p)} className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-transform hover:scale-110" style={{ background: 'var(--violet-main)' }}>
@@ -347,6 +362,10 @@ export default function AdminPage() {
                 <Plus size={15} /> Ajouter
               </button>
             </form>
+
+            {deleteCatError && (
+              <p className="text-xs text-red-400 mb-3">{deleteCatError}</p>
+            )}
 
             <div className="space-y-2">
               {categories.map((cat) => (
