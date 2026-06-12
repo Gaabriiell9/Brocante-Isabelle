@@ -30,8 +30,8 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         style={{
           animationDelay: delay,
           backgroundColor: 'var(--bg-card)',
-          opacity: product.status === 'sold' ? 0.6 : 1,
-          filter: product.status === 'sold' ? 'grayscale(50%)' : 'none',
+          opacity: product.status === 'sold' ? 0.75 : 1,
+          filter: product.status === 'sold' ? 'grayscale(30%)' : 'none',
         }}
       >
         {/* Image */}
@@ -43,7 +43,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover"
-              style={{ opacity: product.status === 'sold' ? 0.45 : 1, filter: product.status === 'sold' ? 'grayscale(60%)' : 'none' }}
+              style={{ opacity: product.status === 'sold' ? 0.75 : 1, filter: product.status === 'sold' ? 'grayscale(30%)' : 'none' }}
               onError={() => setImgError(true)}
             />
           ) : (
@@ -62,6 +62,24 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             >
               {STATUS_LABEL[product.status]}
             </span>
+          )}
+
+          {/* Sold banner */}
+          {product.status === 'sold' && (
+            <div
+              className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden"
+            >
+              <span
+                className="text-sm font-bold text-white"
+                style={{
+                  transform: 'rotate(-35deg)',
+                  background: 'rgba(158,128,231,0.85)',
+                  padding: '4px 40px',
+                }}
+              >
+                Vendu
+              </span>
+            </div>
           )}
 
           {/* Overlay on hover */}
