@@ -73,6 +73,24 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             </div>
           )}
 
+          {/* Reserved banner */}
+          {product.status === 'reserved' && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+              <span
+                className="font-bold"
+                style={{
+                  transform: 'rotate(-35deg)',
+                  background: 'rgba(158,128,231,0.75)',
+                  color: 'white',
+                  padding: '3px 36px',
+                  fontSize: '0.75rem',
+                }}
+              >
+                Réservé
+              </span>
+            </div>
+          )}
+
           {/* Overlay on hover */}
           <div
             className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4"
