@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase, type Product, type Category } from '@/lib/supabase'
+import { Heart } from 'lucide-react'
+import { getFavorites, toggleFavorite } from '@/lib/favorites'
 
 /* ─── Helpers ─────────────────────────────── */
 const STATUS_LABEL: Record<string, string> = {
@@ -18,10 +20,29 @@ const STATUS_CLASS: Record<string, string> = {
 }
 
 /* ─── Product card ────────────────────────── */
-function ProductCard({ product, index }: { product: Product; index: number }) {
+function ProductCard({
+  product,
+  index,
+  isFav,
+  onToggleFav,
+}: {
+  product: Product
+  index: number
+  isFav: boolean
+  onToggleFav: () => void
+}) {
   const [imgError, setImgError] = useState(false)
+  const [animating, setAnimating] = useState(false)
   const img = product.images?.[0]
   const delay = `${(index % 8) * 60}ms`
+
+  function handleFavClick(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setAnimating(true)
+    setTimeout(() => setAnimating(false), 200)
+    onToggleFav()
+  }
 
   return (
     <Link href={`/product/${product.id}`} className="block">
@@ -36,6 +57,29 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       >
         {/* Image */}
         <div className="relative w-full" style={{ aspectRatio: '3/4' }}>
+          {/* Fav button */}
+          <button
+            onClick={handleFavClick}
+            className="absolute top-2 right-2 z-10 flex items-center justify-center rounded-full"
+            style={{
+              background: 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(4px)',
+              padding: '6px',
+              transform: animating ? 'scale(1.3)' : 'scale(1)',
+              transition: 'transform 0.2s ease',
+            }}
+            aria-label={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          >
+            <Heart
+              size={16}
+              style={{
+                color: '#9E80E7',
+                opacity: isFav ? 1 : 0.5,
+                fill: isFav ? '#9E80E7' : 'none',
+                transition: 'opacity 0.2s ease, fill 0.2s ease',
+              }}
+            />
+          </button>
           {img && !imgError ? (
             <Image
               src={img}
@@ -137,6 +181,12 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [loading, setLoading] = useState(true)
+  const [favorites, setFavorites] = useState<string[]>([])
+  const [showFavs, setShowFavs] = useState(false)
+
+  useEffect(() => {
+    setFavorites(getFavorites())
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -154,29 +204,51 @@ export default function HomePage() {
     load()
   }, [])
 
-  const filtered =
-    activeCategory === 'all'
-      ? products
-      : products.filter((p) => p.category_id === activeCategory)
+  function handleToggleFav(id: string) {
+    toggleFavorite(id)
+    setFavorites(getFavorites())
+  }
+
+  const filtered = products
+    .filter((p) => activeCategory === 'all' || p.category_id === activeCategory)
+    .filter((p) => !showFavs || favorites.includes(p.id))
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
       {/* ── Topbar ── */}
       <header className="relative z-20 flex justify-between items-center px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
-        <span className="text-xs tracking-widest" style={{ color: 'var(--violet-main)', fontStyle: 'italic' }}>
-          ✿ Les Pépites Da Paixão ✿
+        <span className="tracking-widest" style={{ color: 'var(--violet-main)', fontStyle: 'italic', fontSize: '1.05rem' }}>
+          ✿ Les Pépites Da Paixão
         </span>
-        <span
-          className="text-lg italic"
+        <button
+          onClick={() => setShowFavs((v) => !v)}
+          className="relative flex items-center gap-1.5 transition-all duration-200"
           style={{
-            fontFamily: "'Playfair Display', serif",
-            background: 'linear-gradient(90deg, #9E80E7, #C4ADFF)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            background: showFavs ? 'var(--violet-main)' : 'transparent',
+            color: showFavs ? 'white' : '#9E80E7',
+            borderRadius: '999px',
+            padding: showFavs ? '6px 14px' : '6px',
           }}
+          aria-label="Filtrer par favoris"
         >
-          ✿
-        </span>
+          <Heart
+            size={18}
+            style={{
+              fill: showFavs ? 'white' : 'none',
+              color: showFavs ? 'white' : '#9E80E7',
+              transition: 'fill 0.2s ease, color 0.2s ease',
+            }}
+          />
+          {showFavs && <span style={{ fontSize: '0.8rem', fontWeight: 600, lineHeight: 1 }}>Favoris</span>}
+          {favorites.length > 0 && !showFavs && (
+            <span
+              className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full text-white"
+              style={{ fontSize: '0.6rem', fontWeight: 700, background: 'var(--violet-main)', lineHeight: 1 }}
+            >
+              {favorites.length}
+            </span>
+          )}
+        </button>
       </header>
 
       {/* ── Category filter ── */}
@@ -219,13 +291,21 @@ export default function HomePage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-4xl mb-4">✨</p>
-            <p style={{ color: 'var(--text-muted)' }}>Aucun article dans cette catégorie</p>
+            <p className="text-4xl mb-4">{showFavs ? '💜' : '✨'}</p>
+            <p style={{ color: 'var(--text-muted)' }}>
+              {showFavs ? "Aucun coup de cœur pour l'instant" : 'Aucun article dans cette catégorie'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filtered.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={i}
+                isFav={favorites.includes(product.id)}
+                onToggleFav={() => handleToggleFav(product.id)}
+              />
             ))}
           </div>
         )}
