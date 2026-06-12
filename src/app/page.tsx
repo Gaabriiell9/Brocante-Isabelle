@@ -162,9 +162,20 @@ export default function HomePage() {
   return (
     <main style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
       {/* ── Topbar ── */}
-      <header className="relative z-20 px-5 py-2.5" style={{ borderBottom: '1px solid var(--border)' }}>
+      <header className="relative z-20 flex justify-between items-center px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
         <span className="text-xs tracking-widest" style={{ color: 'var(--violet-main)' }}>
           ✦ Vide-Dressing ✦
+        </span>
+        <span
+          className="text-lg italic"
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            background: 'linear-gradient(90deg, #9E80E7, #C4ADFF)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          ✿ Isabelle
         </span>
       </header>
 
@@ -223,7 +234,7 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="text-center py-10 text-xs" style={{ color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-        © {new Date().getFullYear()} — Vide-dressing
+        © 2026 — Boutique d'Isabelle · Tous droits réservés
         <span className="mx-3" style={{ color: 'var(--border)' }}>·</span>
         <Link href="/admin" className="hover:underline" style={{ color: 'var(--violet-light)' }}>
           Admin
